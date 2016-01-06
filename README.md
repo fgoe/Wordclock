@@ -4,7 +4,8 @@ Arduino clock with LEDs showing the time with words
 Code:
 ---------------
 Provided is the .ino File for the Arduino IDE. Additionally needed are the following arduino libraries:
-- to be done
+- DCF77 Library
+- Time Library
 
 Summary:
 ----------------
@@ -14,4 +15,9 @@ The time is adjusted by using a DCF77 receiver.
 
 Hardware needed:
 -----------------
-- to be done
+- Arduino. I used an Arduino Mega.
+- Transistor arrays for powering the LEDs.
+- DCF77 Receiver.  I used the one from Pollin -> http://www.pollin.de/shop/dt/NTQ5OTgxOTk-/Bausaetze_Module/Module/DCF_Empfangsmodul_DCF1.html
+- IKEA Frame Ribba with 50cm of "screen size"
+- Printed and cutted foil for the screen
+- Some thin woodplates for making a inside frame.
