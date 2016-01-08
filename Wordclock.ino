@@ -9,31 +9,31 @@
 // GoFlo 28.09.14
 //
 //
-// File für zweite Uhr !!!!
+// File for the wordclock
 //
 // Updates:
 // ----------
 // 
-// - Einsatz von neuer DCF Library
-// - Funktionen in Functions ausgelagert
-// - setBrightness Funktion
-// - Dimmung der LEDs mit Tageszeitsteuerung
+// - New DCF Library
+// - Modularization
+// - setBrightness Function
+// - Dimming of LEDs
 //
 //==========================================================
 
 
-// DCF77 Library einbinden
+// Include libraries
 #include <DCF77.h>
 #include <Time.h>
 
-// Eingangspin für den DCF Empfänger
+// Inputpin for DCF Receiver
 #define DCF_PIN 2
 
-// Interrupt für den Empfänger
+// Interrupt for the receiver
 #define DCF_INTERRUPT 0
 
 
-// Variablen definieren für LED Ausgänge und PIN Nummer zuweisen
+// Define variables for the LED outputs and assign pins
 const int es          = 53;
 const int ist         = 49;
 const int fuenfmin    = 33;
@@ -63,7 +63,7 @@ const int zwoelf      = 25;
 const int uhr         = 27;
 
 
-// Uhrenvariablen initialisieren
+// Initialize clock variables
 int tmpmonth = 8;
 int tmphour = 11;
 int tmpminute = 12;
@@ -74,11 +74,10 @@ int displaydelay = 1;
 int timeon = 1000;
 int timeoff = 1;
 
-// Variable für den Anzeigentest
+// Var for displaytest (Time of delay)
 int testdelay = 2000;
 
-// Neues DCF Objekt erstellen, Variable ist der digitale 
-// Eingangspin auf dem Arduino-Board
+// new DCF Object
 DCF77 funkuhr=DCF77(DCF_PIN,DCF_INTERRUPT,true);
 
 
@@ -88,17 +87,17 @@ DCF77 funkuhr=DCF77(DCF_PIN,DCF_INTERRUPT,true);
 // -----------------------------------------------------
 void setup() {                
 
-  // Serial starten
+  // Start serial
   Serial.begin(9600);
 
-  // Ausgabe auf serieller Konsole
+  // Output to serial Console
   Serial.println("-- Wordclock 1.5 by GoFlo -- "); 
   Serial.println("---------------------------- "); 
   Serial.println(" "); 
   Serial.println("-- Setup wird durchgefuehrt -- "); 
   Serial.println("    . Variablen initialisiert");
   
-  // LED Pins als Outputs festlegen
+  // LED Pins as Output
   pinMode(es, OUTPUT); 
   pinMode(ist, OUTPUT); 
   pinMode(fuenfmin, OUTPUT); 
@@ -129,7 +128,7 @@ void setup() {
   
   Serial.println("    . Pinmodes festgelegt"); 
  
-  // Ausgänge auf LOW setzen / ausschalten
+  // Outputs to LOW / OFF
   digitalWrite(fuenfmin, LOW);
   digitalWrite(zehnmin, LOW);
   digitalWrite(dreiv, LOW);
@@ -159,26 +158,26 @@ void setup() {
   
   Serial.println("    . Alle Ausgaenge auf LOW");
   
-  // Uhr starten
+  // Start "clock"
   funkuhr.Start();
   Serial.println("    . Uhr starten");
   
-  // Ausgabe Setup fertig
+  // End of setup
   Serial.println("-- Setup done -- "); 
   Serial.println(" "); 
   
   testled();
     
-}  //Ende void setup()
+}  //End void setup()
 
 
 
 
-// Anzeigentest
+// Displaytest
 // ----------------------------------------------------------
 void testled() {
   
-  // Die einzelnen Anzeige einmal durchschalten
+  // Test every word on screen
      Serial.println(" ");
      Serial.println("-- Anzeigentest gestartet -- "); 
   
@@ -320,16 +319,16 @@ void testled() {
      Serial.println("-- Anzeigentest beendet -- ");
      Serial.println(" ");
           
-} //Ende ledtest()
+} //End ledtest()
 
 
 
 
-// Berechnung der Uhrzeit
+// Calculation of the actual time
 // ----------------------------------------------------------
 void readclock() {
   
-  // Zeit aus Empfänger lesen
+  // Get time from receiver
   time_t DCFtime = funkuhr.getTime();
   if (DCFtime!=0)
   {
@@ -337,7 +336,7 @@ void readclock() {
     setTime(DCFtime);
     }
   
-  // In Zwischenvariablen kopieren
+  // Copy to temporary variable
   tmpmonth = month();
   tmphour = hour();
   tmpminute = minute();
@@ -345,7 +344,7 @@ void readclock() {
   tmpday = day();
   tmpsecond = second();
   
-  // Zeit auf Konsole ausgeben
+  // Print time to console
   //Serial.print(hour());
   //printDigits(minute());
   //printDigits(second());
@@ -357,7 +356,7 @@ void readclock() {
   //Serial.print(year());
   //Serial.println(); 
     
-}  // Ende readclock()
+}  // End readclock()
 
 
 // Zahlanpassung für Konsole
@@ -373,11 +372,11 @@ void printDigits(int digits){
 }  // Ende printDigits()
 
 
-// Displayanzeigedauer für Helligkeit
+// Set the display brightness
 // ---------------------------------------------------
 void setBrightness(){
   
-  // Tagmodus
+  // Daymode
   if ( tmphour >= 8 && tmphour < 20 ) {
     
       // timeon=9999, timeon=
@@ -388,7 +387,7 @@ void setBrightness(){
   }
   
   
-  // Nachtmodus
+  // Niightmode
    if ( tmphour >= 23 && tmphour < 4 ) {
     
       // set brightness delay
@@ -397,7 +396,7 @@ void setBrightness(){
    }
    
    
-  // Dämmerungsmodus
+  // Dawnmode
    if ( (tmphour >= 4 && tmphour <= 7) || ( tmphour >= 20 && tmphour < 23 )) {
    
       // set brightness delay
@@ -405,17 +404,17 @@ void setBrightness(){
       timeoff = 1000;
    }
      
-   // Ausgabe der aktuellen Werte auf serielle Konsole
+   // Print the actual values to console
    //Serial.print("Delaywert: ");
    //Serial.print(timeon);
    //Serial.print(" microseconds");
    //Serial.println();  
    
-}  // Ende setBrightness()
+}  // End setBrightness()
 
 
 
-// Alle LEDs aus
+// Switch alle LEDs off
 // ----------------------------------------------------------
 void allLEDoff() {
   
@@ -449,15 +448,15 @@ void allLEDoff() {
 }
 
 
-// LEDs schalten
+// Set LEDs to time
 // -----------------------------------------------------------
 void switchled() {
   
-  // "Es ist" anschalten
+  // Switch on "Es ist"
   digitalWrite(es, HIGH);
   digitalWrite(ist, HIGH);
   
-  // Auswertung Stunden und Schalten der LEDs
+  // Get the "hour" value and switch representing the word
   switch (tmphour) {
       case 1:
       case 13:
@@ -919,9 +918,9 @@ void switchled() {
         Serial.println("Case Hour hat nicht gegriffen");
      }
          
-    // Auswertung der Minuten und schalten der LEDs
+    // Get the "minute" value and switch representing the word
       
-	// Punkt xy Uhr
+	// Completed hour
         if (tmpminute >=0 && tmpminute <= 4) {
 		digitalWrite(fuenfmin, LOW);
       		digitalWrite(zehnmin, LOW);
@@ -934,7 +933,7 @@ void switchled() {
       		digitalWrite(uhr, HIGH);
 	}
 
-	// 5 nach
+	// 5 min after
     	if (tmpminute >=5 && tmpminute <= 9) {
       		digitalWrite(fuenfmin, HIGH);
       		digitalWrite(zehnmin, LOW);
@@ -947,7 +946,7 @@ void switchled() {
       		digitalWrite(uhr, LOW);
 	}
 
-	// 10 nach
+	// 10 min after
     	if (tmpminute >= 10 && tmpminute <= 14) {
       		digitalWrite(fuenfmin, LOW);
       		digitalWrite(zehnmin, HIGH);
@@ -960,7 +959,7 @@ void switchled() {
       		digitalWrite(uhr, LOW);
     	}
 
-    	// 15 nach
+    	// 15 min after
     	if (tmpminute >= 15 && tmpminute <= 19) {
       		digitalWrite(fuenfmin, LOW);
       		digitalWrite(zehnmin, LOW);
@@ -973,7 +972,7 @@ void switchled() {
       		digitalWrite(uhr, LOW);
     	}
     
-	// 20 nach
+	// 20 min after
     	if (tmpminute >= 20 && tmpminute <= 24) {
       		digitalWrite(fuenfmin, LOW);
       		digitalWrite(zehnmin, LOW);
@@ -986,7 +985,7 @@ void switchled() {
       		digitalWrite(uhr, LOW);
     	}
     
-    	// 25 nach
+    	// 25 min after
     	if (tmpminute >= 25 && tmpminute <= 29) {
       		digitalWrite(fuenfmin, HIGH);
       		digitalWrite(zehnmin, LOW);
@@ -999,7 +998,7 @@ void switchled() {
       		digitalWrite(uhr, LOW);
 	}
         
-    	// halb
+    	// half past
     	if (tmpminute >= 30 && tmpminute <= 34) {
 	      	digitalWrite(fuenfmin, LOW);
 	      	digitalWrite(zehnmin, LOW);
@@ -1012,7 +1011,7 @@ void switchled() {
       		digitalWrite(uhr, LOW);
     	}
 
-    	// 35 nach
+    	// 35 min after
     	if (tmpminute >= 35 && tmpminute <= 39) {
       		digitalWrite(fuenfmin, HIGH);
       		digitalWrite(zehnmin, LOW);
@@ -1025,7 +1024,7 @@ void switchled() {
       		digitalWrite(uhr, LOW);
     	}
     
-    	// zwanzig vor
+    	// 20 min before
     	if (tmpminute >= 40 && tmpminute <= 44) {
       		digitalWrite(fuenfmin, LOW);
       		digitalWrite(zehnmin, LOW);
@@ -1038,7 +1037,7 @@ void switchled() {
       		digitalWrite(uhr, LOW);
     	}
     
-    	// viertel vor
+    	// 15min before
     	if (tmpminute >= 45 && tmpminute <= 49) {
 		digitalWrite(fuenfmin, LOW);
       		digitalWrite(zehnmin, LOW);
@@ -1051,7 +1050,7 @@ void switchled() {
       		digitalWrite(uhr, LOW);
     	}
  
-    	// 10 vor
+    	// 10 min before
      	if (tmpminute >= 50 && tmpminute <= 54) {
       		digitalWrite(fuenfmin, LOW);
       		digitalWrite(zehnmin, HIGH);
@@ -1064,7 +1063,7 @@ void switchled() {
       		digitalWrite(uhr, LOW);
     	}
   
-    	// 5 vor
+    	// 5 min before
     	if (tmpminute >= 55 && tmpminute <= 59) {
       		digitalWrite(fuenfmin, HIGH);
       		digitalWrite(zehnmin, LOW);
@@ -1080,21 +1079,21 @@ void switchled() {
 }
 
 
-// Hauptloop
+// Mainloop
 // -----------------------------------------------------------
 void loop() {
   
-  // Uhrzeit berechnen
+  // Get clock time
   readclock();
   
-  // Helligkeit einstellen
+  // Set LED brightness
   setBrightness();
     
-  // LEDs schalten
+  // Switch LEDs
   switchled();
   delayMicroseconds(timeon);
   allLEDoff();
   delayMicroseconds(timeoff); 
    
-} // Ende Hauptloop 
+} // End Mainloop 
 
